@@ -132,6 +132,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'mubassir.work@gmail.com'
-EMAIL_HOST_PASSWORD ='gqlxqtjhximxcxf'
+EMAIL_HOST_PASSWORD ='mzjzkoedasjxnuen'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
