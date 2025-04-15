@@ -10,4 +10,4 @@ class CustomUser(AbstractUser):
     contact_no = models.CharField(max_length=15)
 
     def __str__(self):
-        return self.name
+        return self.username
