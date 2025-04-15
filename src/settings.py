@@ -136,3 +136,9 @@ EMAIL_HOST_USER = 'mubassir.work@gmail.com'
 EMAIL_HOST_PASSWORD ='mzjzkoedasjxnuen'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}

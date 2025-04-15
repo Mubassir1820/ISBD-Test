@@ -7,3 +7,5 @@ urlpatterns = [
     path('validate-otp/', ValidateOTP.as_view(), name='validate-otp'),
     path('logout/', user_logout, name='logout'),
 ]
+
+"ab2563c7df81501b1ed833cea3093c952f0e856f"
