@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from rest_framework.views import APIView
@@ -11,6 +11,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer
+from .forms import RegisterForm
 
 class LoginWithOTP(APIView):
     def post(self, request):
@@ -25,7 +26,6 @@ class LoginWithOTP(APIView):
         user.save()
 
         send_otp_email(email, otp)
-        # send_otp_phone(phone_number, otp)
 
         return Response({'message': 'OTP has been sent to your email.'}, status=status.HTTP_200_OK)
     
@@ -41,10 +41,10 @@ class ValidateOTP(APIView):
             return Response({'error': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
         if user.otp == otp:
-            user.otp = None  # Reset the OTP field after successful validation
+            user.otp = None  
             user.save()
 
-            # Authenticate the user and create or get an authentication token
+            
             token, _ = Token.objects.get_or_create(user=user)
 
             return Response({'token': token.key}, status=status.HTTP_200_OK)
@@ -69,8 +69,33 @@ def register_user(request):
 def user_logout(request):
     if request.method == 'POST':
         try:
-            # Delete the user's token to logout
             request.user.auth_token.delete()
             return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+def register(response):
+    if response.method == "POST":
+        form = RegisterForm(response.POST)
+        if form.is_valid():
+            form.save()
+
+        return redirect("/home")
+    else:
+        form = RegisterForm()
+
+    return render(response, "register.html", {"form":form})
+
+
+# def register_page(request):
+#     return render(request, 'register.html')
+
+# def login_page(request):
+#     return render(request, 'login.html')
+
+# def verify_otp_page(request):
+#     return render(request, 'verify_otp.html')
+
+# def dashboard_page(request):
+#     return render(request, 'dashboard.html')
