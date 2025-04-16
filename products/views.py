@@ -33,5 +33,5 @@ def orderCreate(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-def dashboard_view(request):
-    return render(request, 'dashboard.html')
+# def dashboard_view(request):
+#     return render(request, 'dashboard.html')

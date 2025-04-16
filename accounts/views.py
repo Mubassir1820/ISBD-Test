@@ -12,6 +12,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer
 from .forms import RegisterForm
+from django.contrib.auth.decorators import login_required
+from products.models import Order
+
 
 class LoginWithOTP(APIView):
     def post(self, request):
@@ -88,14 +91,72 @@ def register(response):
     return render(response, "register.html", {"form":form})
 
 
-# def register_page(request):
-#     return render(request, 'register.html')
+@login_required
+def home(request):
+    user = request.user
+    orders = Order.objects.filter(customer=user)
 
-# def login_page(request):
-#     return render(request, 'login.html')
+    total_orders = orders.count()
+    total_paid = sum(order.paid_amount for order in orders)
+    total_due = sum(order.due_amount for order in orders)
 
-# def verify_otp_page(request):
-#     return render(request, 'verify_otp.html')
+    context = {
+        "username": user.username,
+        "total_orders": total_orders,
+        "total_paid": total_paid,
+        "total_due": total_due,
+    }
+    return render(request, "home.html", context)
 
-# def dashboard_page(request):
-#     return render(request, 'dashboard.html')
+
+
+# CustomLogin OTP view
+from django.contrib.auth.views import LoginView
+from django.contrib.auth import authenticate
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.urls import reverse_lazy
+from .models import CustomUser
+from .utils import send_otp_email, generate_otp  
+
+class LoginWithOTPView(LoginView):
+    template_name = 'login.html' 
+
+    def form_valid(self, form):
+        """Override default login flow to send OTP instead"""
+        user = form.get_user()
+
+        # Generate OTP
+        user.otp = generate_otp() 
+        user.save()
+        send_otp_email(user.email, user.otp)
+
+        self.request.session['temp_user_id'] = user.id
+
+       
+        return redirect('verify-otp')
+    
+
+from django.contrib.auth import login
+
+def verify_otp_view(request):
+    if request.method == "POST":
+        entered_otp = request.POST.get('otp')
+        user_id = request.session.get('temp_user_id')
+
+        try:
+            user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
+            messages.error(request, "Invalid or expired session.")
+            return redirect("login")
+
+        if user.otp == entered_otp:
+            login(request, user)  
+            user.otp = ''
+            user.save()
+            del request.session['temp_user_id']
+            return redirect("home")
+        else:
+            messages.error(request, "Incorrect OTP")
+
+    return render(request, "verify_otp.html")
