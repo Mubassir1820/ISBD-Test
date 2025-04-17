@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4">Weekly Payment Report</h2>
+    <canvas id="weeklyChart"></canvas>
+
+    <h2 class="mt-5 mb-4">Monthly Payment Report</h2>
+    <canvas id="monthlyChart"></canvas>
+</div>
+
+<script>
+    const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+
+    const weeklyChart = new Chart(weeklyCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ weekly_labels|safe }},
+            datasets: [{
+                label: 'Total Paid (Weekly)',
+                data: {{ weekly_totals|safe }},
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        }
+    });
+
+    const monthlyChart = new Chart(monthlyCtx, {
+        type: 'line',
+        data: {
+            labels: {{ monthly_labels|safe }},
+            datasets: [{
+                label: 'Total Paid (Monthly)',
+                data: {{ monthly_totals|safe }},
+                backgroundColor: 'rgba(255, 99, 132, 0.4)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                fill: true,
+                tension: 0.3
+            }]
+        }
+    });
+</script>
+</body>
+</html>

@@ -118,6 +118,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from .models import CustomUser
 from .utils import send_otp_email, generate_otp  
+from django.contrib.auth import login
 
 class LoginWithOTPView(LoginView):
     template_name = 'login.html' 
@@ -137,7 +138,7 @@ class LoginWithOTPView(LoginView):
         return redirect('verify-otp')
     
 
-from django.contrib.auth import login
+
 
 def verify_otp_view(request):
     if request.method == "POST":
@@ -155,6 +156,7 @@ def verify_otp_view(request):
             user.otp = ''
             user.save()
             del request.session['temp_user_id']
+
             return redirect("home")
         else:
             messages.error(request, "Incorrect OTP")
