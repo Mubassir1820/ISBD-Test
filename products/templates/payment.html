@@ -31,7 +31,7 @@
     });
 
     const monthlyChart = new Chart(monthlyCtx, {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: {{ monthly_labels|safe }},
             datasets: [{
