@@ -6,3 +6,4 @@ djangorestframework-simplejwt==5.5.0
 django-crispy-forms==2.4
 crispy-bootstrap4==2024.10
 chartjs==1.2
+django-celery-beat==2.8.0

@@ -14,6 +14,11 @@ from .serializers import UserSerializer
 from .forms import RegisterForm
 from django.contrib.auth.decorators import login_required
 from products.models import Order
+from django.contrib.auth.views import LoginView
+from django.contrib import messages
+from django.urls import reverse_lazy
+from .utils import send_otp_email, generate_otp  
+from django.contrib.auth import login
 
 
 class LoginWithOTP(APIView):
@@ -111,20 +116,11 @@ def home(request):
 
 
 # CustomLogin OTP view
-from django.contrib.auth.views import LoginView
-from django.contrib.auth import authenticate
-from django.shortcuts import redirect
-from django.contrib import messages
-from django.urls import reverse_lazy
-from .models import CustomUser
-from .utils import send_otp_email, generate_otp  
-from django.contrib.auth import login
 
 class LoginWithOTPView(LoginView):
     template_name = 'login.html' 
 
     def form_valid(self, form):
-        """Override default login flow to send OTP instead"""
         user = form.get_user()
 
         # Generate OTP

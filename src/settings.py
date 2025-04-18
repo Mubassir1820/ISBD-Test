@@ -156,3 +156,8 @@ CRISPY_TEMPLATE_PACK="bootstrap4"
 # LOGIN_REDIRECT_URL = "/home/"
 LOGIN_REDIRECT_URL = "/verify-otp/"
 LOGOUT_REDIRECT_URL = "/register/"
+
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'

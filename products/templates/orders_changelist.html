@@ -1,0 +1,14 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}
+    <h2>📊 Weekly Report</h2>
+    <p><strong>Paid:</strong> {{ weekly_paid }}</p>
+    <p><strong>Due:</strong> {{ weekly_due }}</p>
+
+    <h2>📆 Monthly Report</h2>
+    <p><strong>Paid:</strong> {{ monthly_paid }}</p>
+    <p><strong>Due:</strong> {{ monthly_due }}</p>
+
+    <hr>
+    {{ block.super }}
+{% endblock %}
