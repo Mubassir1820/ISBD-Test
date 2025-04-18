@@ -89,7 +89,7 @@ def register(response):
         if form.is_valid():
             form.save()
 
-        return redirect("/home")
+        return redirect("/login")
     else:
         form = RegisterForm()
 
@@ -132,29 +132,33 @@ class LoginWithOTPView(LoginView):
 
        
         return redirect('verify-otp')
-    
+
 
 
 
 def verify_otp_view(request):
+    user_id = request.session.get('temp_user_id')
+
+    if not user_id:
+        messages.error(request, "Session expired or invalid access.")
+        return redirect("login")
+
     if request.method == "POST":
         entered_otp = request.POST.get('otp')
-        user_id = request.session.get('temp_user_id')
 
         try:
             user = CustomUser.objects.get(id=user_id)
         except CustomUser.DoesNotExist:
-            messages.error(request, "Invalid or expired session.")
+            messages.error(request, "Invalid user.")
             return redirect("login")
 
         if user.otp == entered_otp:
-            login(request, user)  
+            login(request, user)
             user.otp = ''
             user.save()
-            del request.session['temp_user_id']
-
+            request.session.pop('temp_user_id', None)  # safely remove
             return redirect("home")
         else:
-            messages.error(request, "Incorrect OTP")
+            messages.error(request, "Incorrect OTP.")
 
     return render(request, "verify_otp.html")
